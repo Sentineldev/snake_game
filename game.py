@@ -17,9 +17,9 @@ class Game:
 
 
 
-        self.snake = Snake(130,130)
+        self.snake = Snake(120,120)
 
-        self.food = Food(52,52)
+        self.food = Food(60,60)
 
         self.font = pygame.font.SysFont('ubuntumono',size=20,bold=True,italic=False)
         self.font_color = (255,255,255)
@@ -35,15 +35,25 @@ class Game:
     def drawSnake(self):
         #draw every element, the first one is the head so the color is different
         for index,element in enumerate(self.snake.snake):
+            #pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
+
+            '''
+            if index > 1:
+                pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
+            
             if index == 0:
                 pygame.draw.rect(self.snake_area,self.snake.head_color,element,border_radius=1)
             else:
                 pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
-
+            '''
+        #self.snake_area.blit(self.snake.graphics[0]["graphic"],self.snake.graphics[0]["pos"])
+        for graphic in self.snake.graphics:
+            self.snake_area.blit(graphic["graphic"],graphic['pos'])
     #food.
     def drawFood(self):
         pygame.draw.rect(self.snake_area,self.food.food_color,self.food.food)
 
+        self.snake_area.blit(self.food.apple,self.food.food)
 
 
     #starting the game
@@ -65,9 +75,8 @@ class Game:
 
     def __startGame(self):
         self.snake.initSnake()
-        print(self.snake)
         while True:
-            
+
 
 
             if self.checkIfOutOfScreen():
@@ -109,6 +118,7 @@ class Game:
 
             #moving the snake
             self.snake.move()
+            self.snake.snakeGraphics()
 
             #setting the background collor.
             self.snake_area.fill((25,25,25))
@@ -129,7 +139,7 @@ class Game:
             
 
 
-            pygame.time.Clock().tick(15)
+            pygame.time.Clock().tick(13)
             pygame.display.update()
     
         time.sleep(3)

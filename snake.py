@@ -8,8 +8,8 @@ class Snake:
 
 
         #size of the snake actually.
-        self.block_width = 13
-        self.block_height = 13
+        self.block_width = 15
+        self.block_height = 15
 
 
         #starting positions and starting state.
@@ -34,6 +34,9 @@ class Snake:
         self.body_color = (255,255,255)
 
 
+        self.graphics = []
+
+
         #this will increment according to the block size. and are use for moving the snake .
         self.__VERTICAL_MOVE = 0
         self.__HORIZONTAL_MOVE  = 0
@@ -46,7 +49,7 @@ class Snake:
         self.snake = []
         increment = -self.block_width
         for i in range(3):
-            increment+=13
+            increment+=self.block_width
             self.snake.append(pygame.Rect(self.start_left+increment,self.start_top,self.block_width,self.block_height))
 
         self.head = self.snake[0]
@@ -54,6 +57,7 @@ class Snake:
         self.__VERTICAL_MOVE = 0
         self.__HORIZONTAL_MOVE = 0
         self.start_state = True
+        self.snakeGraphics()
 
     #checking if the snake has not move to right than it can move to the left
     def moveLeft(self):
@@ -125,8 +129,98 @@ class Snake:
                     previous_pos = aux_list.pop(0)
                     self.snake[index].left = previous_pos.left
                     self.snake[index].top = previous_pos.top
-                aux_list.append(current_pos)                
 
+                aux_list.append(current_pos)                
     
+
+    def snakeGraphics(self):
+        self.graphics = []
+
+
+        #head
+        head = pygame.image.load('head.png')
+        head = pygame.transform.scale(head,(self.block_width,self.block_height))
+
+
+        #BODY
+        body = pygame.image.load("body.png")
+        body = pygame.transform.scale(body,(self.block_width,self.block_height))
+
+        vertical_body = pygame.transform.rotate(body,-90)
+
+
+        #tail
+        tail = pygame.image.load('tail.png')
+        tail = pygame.transform.scale(tail,(self.block_width+1,self.block_height+4))
+        
+        tail_verical_down = pygame.transform.rotate(tail,180)
+        tail_horizotal_left = pygame.transform.rotate(tail,90)
+        tail_horizotal_right = pygame.transform.rotate(tail,-90)
+
+
+        #curve body
+        curve = pygame.image.load('curve.png')
+        curve = pygame.transform.scale(curve,(self.block_width+3,self.block_height+3))
+
+
+        if self.__HORIZONTAL_MOVE > 0:
+            head = pygame.transform.rotate(head,-90)
+        elif self.__HORIZONTAL_MOVE < 0:
+            head = pygame.transform.rotate(head,90)
+        elif self.__VERTICAL_MOVE > 0:
+            head = pygame.transform.rotate(head,180)
+        
+        
+        self.graphics.append({"graphic":head,"pos":self.snake[0]})
+
+        for index,element in enumerate(self.snake):
+            if index + 1 < len(self.snake) and index > 0:
+
+                
+                if self.snake[index-1].left == self.snake[index].left and self.snake[index].left == self.snake[index+1].left:
+                    self.graphics.append({"graphic":vertical_body,"pos":self.snake[index]})
+                    
+                elif self.snake[index-1].top == self.snake[index].top and self.snake[index].top == self.snake[index+1].top:
+                    self.graphics.append({"graphic":body,"pos":self.snake[index]})
+                
+                else:
+                    if self.snake[index].top == self.snake[index-1].top:
+                        if self.snake[index].left >= self.snake[index-1].left:
+                            if self.snake[index].top >= self.snake[index+1].top:
+                                current_curve = curve.copy()
+                            else:
+                                current_curve = pygame.transform.rotate(curve,90)
+                            self.graphics.append({"graphic":current_curve,"pos":self.snake[index]})  
+                        elif self.snake[index].left <= self.snake[index-1].left:
+                            if self.snake[index].top >= self.snake[index+1].top:
+                                current_curve = pygame.transform.rotate(curve,-90)
+                            else:
+                                current_curve = pygame.transform.rotate(curve,-180)
+                            self.graphics.append({"graphic":current_curve,"pos":self.snake[index]})
+                    elif self.snake[index].left == self.snake[index-1].left:
+                        if self.snake[index].top >= self.snake[index-1].top:
+                            if self.snake[index].left >= self.snake[index+1].left:
+                                current_curve = curve
+                            else:
+                                current_curve = pygame.transform.rotate(curve,-90)
+                            self.graphics.append({"graphic":current_curve,"pos":self.snake[index]})
+                        else:
+                            if self.snake[index].left >= self.snake[index+1].left:
+                                current_curve = pygame.transform.rotate(curve,90)
+                            else:
+                                current_curve = pygame.transform.rotate(curve,180)
+                            self.graphics.append({"graphic":current_curve,"pos":self.snake[index]})
+
+            elif index == len(self.snake)-1:
+                if self.snake[index].left == self.snake[index-1].left:
+                    if self.snake[index].top >= self.snake[index-1].top:
+                        self.graphics.append({"graphic":tail,"pos":self.snake[index]})
+                    else:
+                        self.graphics.append({"graphic":tail_verical_down,"pos":self.snake[index]})
+                elif self.snake[index].top == self.snake[index-1].top:
+                    if self.snake[index].left >= self.snake[index-1].left:
+                        self.graphics.append({"graphic":tail_horizotal_left,"pos":self.snake[index]})
+                    else:
+                        self.graphics.append({"graphic":tail_horizotal_right,"pos":self.snake[index]})
 
 
