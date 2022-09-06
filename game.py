@@ -9,11 +9,11 @@ pygame.init()
 from food import Food
 class Game:
     def __init__(self):
-        self.screen_width = 500
-        self.screen_height = 500
+        self.screen_width = 800
+        self.screen_height = 800
 
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.snake_area = pygame.Surface((self.screen_width*0.8,self.screen_height*0.8))
+        self.snake_area = pygame.Surface((self.screen_width*0.87,self.screen_height*0.85))
 
 
 
@@ -26,6 +26,10 @@ class Game:
 
 
 
+        self.user_event = pygame.USEREVENT
+        pygame.time.set_timer(self.user_event,150)
+
+
 
 
 
@@ -34,24 +38,15 @@ class Game:
 
     def drawSnake(self):
         #draw every element, the first one is the head so the color is different
-        for index,element in enumerate(self.snake.snake):
-            #pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
 
-            '''
-            if index > 1:
-                pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
-            
-            if index == 0:
-                pygame.draw.rect(self.snake_area,self.snake.head_color,element,border_radius=1)
-            else:
-                pygame.draw.rect(self.snake_area,self.snake.body_color,element,border_radius=1)
-            '''
+           
         #self.snake_area.blit(self.snake.graphics[0]["graphic"],self.snake.graphics[0]["pos"])
         for graphic in self.snake.graphics:
+            rect = graphic['graphic'].get_rect()
             self.snake_area.blit(graphic["graphic"],graphic['pos'])
     #food.
     def drawFood(self):
-        pygame.draw.rect(self.snake_area,self.food.food_color,self.food.food)
+        #pygame.draw.rect(self.snake_area,self.food.food_color,self.food.food)
 
         self.snake_area.blit(self.food.apple,self.food.food)
 
@@ -86,14 +81,12 @@ class Game:
                 self.snake.initSnake()
                 self.food.relocateFood()
 
-            #checking if the snake colide with itself
-            if self.snake.checkSelfCollide():
-                self.screen.blit(self.font.render("Oops!, te chocaste contigo mismo",True,(255,255,255)),(80,250))
-                pygame.display.update()
-                pygame.time.delay(3000)
-                self.snake.initSnake()
-                self.food.relocateFood()
+            
+
+            
+            
             #checking if the snake colide with food.
+
             if self.snake.checkCollision(self.food.food.copy()):
                 self.snake.Eat(self.food.food.copy())
                 self.food.relocateFood()
@@ -103,6 +96,19 @@ class Game:
             #checking if events to set the direction of the snake
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: exit()
+
+                if event.type == self.user_event:
+                    
+                    self.snake.move()
+                    self.snake.snakeGraphics()
+
+                    #checking if the snake colide with itself
+                    if self.snake.checkSelfCollide():
+                        self.screen.blit(self.font.render("Oops!, te chocaste contigo mismo",True,(255,255,255)),(80,250))
+                        pygame.display.update()
+                        pygame.time.delay(3000)
+                        self.snake.initSnake()
+                        self.food.relocateFood()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
@@ -117,8 +123,7 @@ class Game:
 
 
             #moving the snake
-            self.snake.move()
-            self.snake.snakeGraphics()
+            
 
             #setting the background collor.
             self.snake_area.fill((25,25,25))
@@ -139,8 +144,9 @@ class Game:
             
 
 
-            pygame.time.Clock().tick(13)
             pygame.display.update()
+            pygame.time.Clock().tick(60)
+
     
         time.sleep(3)
     

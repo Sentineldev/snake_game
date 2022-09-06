@@ -8,8 +8,8 @@ class Snake:
 
 
         #size of the snake actually.
-        self.block_width = 15
-        self.block_height = 15
+        self.block_width = 30
+        self.block_height = 30
 
 
         #starting positions and starting state.
@@ -42,15 +42,26 @@ class Snake:
         self.__HORIZONTAL_MOVE  = 0
 
 
+        #initializing snake graphics
+
+        self.snake_head = pygame.image.load('assets/head.png')
+        self.snake_body = pygame.image.load('assets/body.png')
+        self.snake_body_curve = pygame.image.load('assets/curve.png')
+        self.snake_tail = pygame.image.load('assets/tail.png')
+
+
 
 
     #initializing the snake
     def initSnake(self):
         self.snake = []
         increment = -self.block_width
-        for i in range(3):
-            increment+=self.block_width
-            self.snake.append(pygame.Rect(self.start_left+increment,self.start_top,self.block_width,self.block_height))
+
+        self.snake = [
+            pygame.Rect(self.start_left,self.start_top,self.block_width,self.block_width),
+            pygame.Rect(self.start_left,self.start_top+self.block_width,self.block_width,self.block_width),
+            pygame.Rect(self.start_left,self.start_top+self.block_width*2,self.block_width,self.block_width)
+        ]
 
         self.head = self.snake[0]
         self.snake_size = 3
@@ -76,16 +87,17 @@ class Snake:
 
     #checking if the snake has not move down than it can move up.
     def moveUp(self):
-        if not self.__VERTICAL_MOVE > 0 :
-            self.__HORIZONTAL_MOVE =  0
-            self.__VERTICAL_MOVE = - self.block_height
-            self.start_state = False
+            if not self.__VERTICAL_MOVE > 0 :
+                self.__HORIZONTAL_MOVE =  0
+                self.__VERTICAL_MOVE = - self.block_height
+                self.start_state = False
     #checking if the snake has not move up than it can move down.
     def moveDown(self):
-        if not self.__VERTICAL_MOVE < 0:
-            self.__HORIZONTAL_MOVE = 0
-            self.__VERTICAL_MOVE = self.block_height
-            self.start_state = False
+        if not self.start_state:
+            if not self.__VERTICAL_MOVE < 0:
+                self.__HORIZONTAL_MOVE = 0
+                self.__VERTICAL_MOVE = self.block_height
+                self.start_state = False
 
 
 
@@ -138,47 +150,47 @@ class Snake:
 
 
         #head
-        head = pygame.image.load('head.png')
+        head = self.snake_head.copy()
         head = pygame.transform.scale(head,(self.block_width,self.block_height))
 
 
         #BODY
-        body = pygame.image.load("body.png")
-        body = pygame.transform.scale(body,(self.block_width,self.block_height))
+        body = self.snake_body.copy()
+        body = pygame.transform.scale(body,(self.block_width+2,self.block_height))
 
-        vertical_body = pygame.transform.rotate(body,-90)
 
 
         #tail
-        tail = pygame.image.load('tail.png')
+        tail = self.snake_tail.copy()
         tail = pygame.transform.scale(tail,(self.block_width+1,self.block_height+4))
         
-        tail_verical_down = pygame.transform.rotate(tail,180)
-        tail_horizotal_left = pygame.transform.rotate(tail,90)
-        tail_horizotal_right = pygame.transform.rotate(tail,-90)
 
 
         #curve body
-        curve = pygame.image.load('curve.png')
-        curve = pygame.transform.scale(curve,(self.block_width+3,self.block_height+3))
+        curve = self.snake_body_curve
+        curve = pygame.transform.scale(curve,(self.block_width,self.block_height+4))
 
-
-        if self.__HORIZONTAL_MOVE > 0:
-            head = pygame.transform.rotate(head,-90)
-        elif self.__HORIZONTAL_MOVE < 0:
-            head = pygame.transform.rotate(head,90)
-        elif self.__VERTICAL_MOVE > 0:
-            head = pygame.transform.rotate(head,180)
         
-        
-        self.graphics.append({"graphic":head,"pos":self.snake[0]})
-
         for index,element in enumerate(self.snake):
-            if index + 1 < len(self.snake) and index > 0:
+
+            #setting head position
+            if index == 0:
+                if self.__HORIZONTAL_MOVE > 0:
+                    head = pygame.transform.rotate(head,-90)
+                elif self.__HORIZONTAL_MOVE < 0:
+                    head = pygame.transform.rotate(head,90)
+                elif self.__VERTICAL_MOVE > 0:
+                    head = pygame.transform.rotate(head,180)
+                
+                self.graphics.append({"graphic":head,"pos":self.snake[index]})
+
+            #setting body and curves positions
+            elif index + 1 < len(self.snake) and index > 0:
 
                 
                 if self.snake[index-1].left == self.snake[index].left and self.snake[index].left == self.snake[index+1].left:
-                    self.graphics.append({"graphic":vertical_body,"pos":self.snake[index]})
+                    body_angle = pygame.transform.rotate(body,90)
+                    self.graphics.append({"graphic":body_angle,"pos":self.snake[index]})
                     
                 elif self.snake[index-1].top == self.snake[index].top and self.snake[index].top == self.snake[index+1].top:
                     self.graphics.append({"graphic":body,"pos":self.snake[index]})
@@ -211,16 +223,20 @@ class Snake:
                                 current_curve = pygame.transform.rotate(curve,180)
                             self.graphics.append({"graphic":current_curve,"pos":self.snake[index]})
 
+            #setting tail position
             elif index == len(self.snake)-1:
                 if self.snake[index].left == self.snake[index-1].left:
                     if self.snake[index].top >= self.snake[index-1].top:
                         self.graphics.append({"graphic":tail,"pos":self.snake[index]})
                     else:
-                        self.graphics.append({"graphic":tail_verical_down,"pos":self.snake[index]})
+                        tail_angle = pygame.transform.rotate(tail,180)
+                        self.graphics.append({"graphic":tail_angle,"pos":self.snake[index]})
                 elif self.snake[index].top == self.snake[index-1].top:
                     if self.snake[index].left >= self.snake[index-1].left:
-                        self.graphics.append({"graphic":tail_horizotal_left,"pos":self.snake[index]})
+                        tail_angle = pygame.transform.rotate(tail,90)
+                        self.graphics.append({"graphic":tail_angle,"pos":self.snake[index]})
                     else:
-                        self.graphics.append({"graphic":tail_horizotal_right,"pos":self.snake[index]})
+                        tail_angle = pygame.transform.rotate(tail,-90)
+                        self.graphics.append({"graphic":tail_angle,"pos":self.snake[index]})
 
 
