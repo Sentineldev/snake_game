@@ -45,10 +45,16 @@ class Snake:
         #initializing snake graphics
 
         self.snake_head = pygame.image.load('assets/head.png')
-        self.snake_body = pygame.image.load('assets/body.png')
-        self.snake_body_curve = pygame.image.load('assets/curve.png')
-        self.snake_tail = pygame.image.load('assets/tail.png')
+        self.snake_head = pygame.transform.scale(self.snake_head,(self.block_width,self.block_height))
 
+        self.snake_body = pygame.image.load('assets/body.png')
+        self.snake_body = pygame.transform.scale(self.snake_body,(self.block_width,self.block_height))
+
+        self.snake_body_curve = pygame.image.load('assets/curve.png')
+        self.snake_body_curve = pygame.transform.scale(self.snake_body_curve,(self.block_width,self.block_height))
+
+        self.snake_tail = pygame.image.load('assets/tail.png')
+        self.snake_tail = pygame.transform.scale(self.snake_tail,(self.block_width,self.block_height))
 
 
 
@@ -151,24 +157,21 @@ class Snake:
 
         #head
         head = self.snake_head.copy()
-        head = pygame.transform.scale(head,(self.block_width,self.block_height))
 
 
         #BODY
         body = self.snake_body.copy()
-        body = pygame.transform.scale(body,(self.block_width+2,self.block_height))
+        
 
 
 
         #tail
         tail = self.snake_tail.copy()
-        tail = pygame.transform.scale(tail,(self.block_width+1,self.block_height+4))
         
 
 
         #curve body
         curve = self.snake_body_curve
-        curve = pygame.transform.scale(curve,(self.block_width,self.block_height+4))
 
         
         for index,element in enumerate(self.snake):
