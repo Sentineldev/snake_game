@@ -22,9 +22,7 @@ class Snake:
         self.__snake_length = 0
         self.__snake = []
         for i in range(3):
-            new_block = Block(self.__block_size)
-            new_block.left = x
-            new_block.top = y
+            new_block = Block(self.__block_size,x,y)
             x+=self.__block_size
 
             self.__snake.append(new_block)
@@ -70,7 +68,7 @@ class Snake:
     def checkCollision(self,rect) -> bool:
         return self.__head.collidepoint(rect.left,rect.top)
 
-    def checkSelfCollide(self):
+    def checkSelfCollide(self) -> bool:
         for index in range(1,self.__snake_length):
             if self.checkCollision(self.__snake[index]):
                 return True
@@ -92,8 +90,8 @@ class Snake:
         return self.__snake_length
 
     @property
-    def HorizontalMove(self):
+    def HorizontalMove(self) -> int:
         return self.__HORIZONTAL_MOVE
     @property
-    def VerticalMove(self):
+    def VerticalMove(self) -> int:
         return self.__VERTICAL_MOVE

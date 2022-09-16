@@ -66,6 +66,8 @@ class SnakeArea(pygame.Surface):
         for  i in range(self.__block_num):
             for j in range(self.__block_num):
                 
+                #setting brown grass at the edge of the surface
+                #middle is green grass.
                 if i == 0:
                     self.blit(brown_grass,(x,y))
                 elif j == 0:
@@ -219,17 +221,15 @@ class MainWindow:
         apple = self.__spriteSheet.getSprite("food_apple",25)
         self.__counter_surface.fill((148,117,94))
         self.__counter_surface.blit(apple,(0,0))
-        self.__counter_surface.blit(
-            self.__counter_text.render(f"{self.snake_area.Snake.Length}",False,(255,255,255),(148,117,94)),
-            (30,8)
-        )
-        self.main_window.blit(self.__counter_surface,(200,0))
 
-    def __drawText(self,text):
-        self.main_window.blit(
-            self.__random_text.render(text,False,(255,255,255),(148,117,94)),
-            (30,30)
-        )
+        text = self.__counter_text.render(f"{self.snake_area.Snake.Length}",False,(255,255,255),(148,117,94))
+        self.__counter_surface.blit(text,(30,8))
+
+        surface_pos = self.__counter_surface.get_rect()
+        surface_pos.centerx = self.main_window.get_rect().centerx
+
+        self.main_window.blit(self.__counter_surface,surface_pos)
+
 
     def __drawBackground(self):
         water = self.__spriteSheet.getEnvironSprite("water_sprite",self.__block_size)
@@ -241,6 +241,14 @@ class MainWindow:
                 x+=self.__block_size
             x = 0
             y+=self.__block_size
+
+    def __drawSnakeArea(self):
+        snake_area_pos = self.snake_area.get_rect()
+        snake_area_pos.centery = self.main_window.get_rect().centery
+        snake_area_pos.centerx = self.main_window.get_rect().centerx
+        
+        self.main_window.blit(self.snake_area,snake_area_pos)
+
 
     def initElements(self):
         pygame.time.set_timer(self.__userEvent,self.__element_speed)
@@ -279,8 +287,7 @@ class MainWindow:
 
                     self.snake_area.drawElements() 
 
-                    self.main_window.blit(self.snake_area,(60,50))
-                    
+                    self.__drawSnakeArea()                    
                     if self.snake_area.checkIfOutOfScreen():
                         self.snake_area.Snake.initSnake() 
                     
