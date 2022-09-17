@@ -254,6 +254,7 @@ class MainWindow:
 
     def initElements(self):
         pygame.time.set_timer(self.__userEvent,self.__element_speed)
+        pygame.display.set_caption("Snake Game")
         self.snake_area.setSheet(self.__spriteSheet)
         self.__drawBackground()
         self.__drawTitle()
