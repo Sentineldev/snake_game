@@ -1,4 +1,5 @@
 
+from pickle import FALSE
 import pygame
 from sys import exit
 from snake import Snake
@@ -207,6 +208,7 @@ class MainWindow:
         self.__fps = 60
         self.__element_speed = 120
         self.__userEvent = pygame.USEREVENT
+        self.___StopEvent = pygame.USEREVENT
 
 
     def __drawTitle(self):
@@ -262,7 +264,8 @@ class MainWindow:
         self.initElements()
         self.snake_area.initElements()
 
-        
+        movement_action_start = False
+        stop_flag = False
         while True:
             
             self.__drawCounter()   
@@ -273,34 +276,45 @@ class MainWindow:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.snake_area.Snake.MoveLeft()
+                        if not movement_action_start:
+                            self.snake_area.Snake.MoveLeft()
+                            movement_action_start = True
                     elif event.key == pygame.K_RIGHT:
-                        self.snake_area.Snake.MoveRight()
+                        if not movement_action_start:
+                            self.snake_area.Snake.MoveRight()
+                            movement_action_start = True
                     elif event.key == pygame.K_UP:
-                        self.snake_area.Snake.MoveUp()
+                        if not movement_action_start:
+                            self.snake_area.Snake.MoveUp()
+                            movement_action_start = True
                     elif event.key == pygame.K_DOWN:
-                        self.snake_area.Snake.MoveDown()
+                        if not movement_action_start:
+                            self.snake_area.Snake.MoveDown()
+                            movement_action_start = True
 
                 if event.type == self.__userEvent:
-                        
                     self.snake_area.Snake.Move()
 
-                    self.snake_area.drawElements() 
 
-                    self.__drawSnakeArea()                    
+                    self.snake_area.drawElements()
+                    self.__drawSnakeArea()
+                    
+
                     if self.snake_area.checkIfOutOfScreen():
-                        self.snake_area.Snake.initSnake() 
+                        stop_flag = True
                     
                     if self.snake_area.Snake.checkSelfCollide():
-                        self.snake_area.Snake.initSnake()
+                        stop_flag = True
 
                     if self.snake_area.Snake.checkCollision(self.snake_area.Food):
                         self.snake_area.Snake.Eat(self.snake_area.Food)
                         self.snake_area.RelocateFood()
+
+                    movement_action_start = False
             
-            
-            
-           
+            if stop_flag:
+                stop_flag = False
+                self.snake_area.Snake.initSnake()
 
             pygame.display.update()
             pygame.time.Clock().tick(self.__fps)

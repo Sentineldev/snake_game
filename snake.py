@@ -16,7 +16,6 @@ class Snake:
 
 
 
-
     def initSnake(self):
         x,y = self.__block_size*6,self.__block_size*6
         self.__snake_length = 0
