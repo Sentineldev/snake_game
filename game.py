@@ -2,10 +2,9 @@
 from pickle import FALSE
 import pygame
 from sys import exit
-from snake import Snake
-from food import Food
-from sprite_sheet import SpriteSheet
-from time import sleep
+from classes.snake import Snake
+from classes.food import Food
+from classes.sprite_sheet import SpriteSheet
 
 pygame.init()
 pygame.font.init()
@@ -91,6 +90,11 @@ class SnakeArea(pygame.Surface):
         self.blit(apple,(self.__food.left,self.__food.top))
 
     def __drawSnake(self):
+
+        head = None
+        body = None
+        tail = None
+        curve = None
         
         for index in range(self.__snake.Length):
             if index == 0:
@@ -184,10 +188,13 @@ class SnakeArea(pygame.Surface):
 class MainWindow:
     def __init__(self):
         self.__block_size = 30
+
         self.__block_num = 20
+
 
         self.__width = self.__block_size * self.__block_num
         self.__height = self.__block_size * self.__block_num
+
 
         self.__size = (self.__width,self.__height)
 
@@ -196,6 +203,8 @@ class MainWindow:
         self.snake_area = SnakeArea(self.__block_size,self.__block_num)
 
         self.__spriteSheet = SpriteSheet()
+
+        
 
         self.__font = pygame.font.Font(None,32)
         self.__title = pygame.font.Font(None,32)
@@ -254,7 +263,6 @@ class MainWindow:
 
     def initElements(self):
         pygame.time.set_timer(self.__userEvent,self.__element_speed)
-        pygame.display.set_caption("Snake Game")
         self.snake_area.setSheet(self.__spriteSheet)
         self.__drawBackground()
         self.__drawTitle()
@@ -264,9 +272,12 @@ class MainWindow:
         
         self.initElements()
         self.snake_area.initElements()
-
+        
         movement_action_start = False
         stop_flag = False
+        
+        
+
         while True:
             
             self.__drawCounter()   

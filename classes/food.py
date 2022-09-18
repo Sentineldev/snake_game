@@ -1,5 +1,5 @@
 
-from block import Block
+from classes.block import Block
 from random import randrange
 class Food(Block):
     def __init__(self,block_size:int):

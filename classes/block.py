@@ -1,4 +1,5 @@
 import pygame
+pygame.init()
 class Block(pygame.Rect):
     def __init__(self,block_size:int,startPosX=None,startPosY=None):
         self.__block_size = block_size

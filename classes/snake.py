@@ -1,4 +1,4 @@
-from block import Block
+from classes.block import Block
 
 class Snake:
     def __init__(self,block_size:int):
